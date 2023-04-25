@@ -7,8 +7,36 @@
 */
 
 #include <Arduino.h>
-#include<math.h>
+#include <math.h>
+#include "common.h"
 #include "classic_gripper.h"
+
+/******* Generic initializations  *******/
+/// @brief Possible configurations for the TOF sensor
+enum TOFMODE
+{
+  POSITIONING = 0,
+  DETECTING = 1
+};
+
+/// @brief Available grippers
+enum GRIPPER
+{
+  CLASSIC = 0,
+  PNEUMATIC = 1
+};
+
+
+// State variables
+GRIPPER gripper_type = CLASSIC;
+TOFMODE tof_mode = POSITIONING;
+
+// TOF variables
+Adafruit_VL53L0X lox = Adafruit_VL53L0X();
+VL53L0X_RangingMeasurementData_t measure;
+bool DISTANCE_THRESHOLD_SIGNAL;
+
+/****************************************/
 
 
 float cg::get_current(int n_samples)
@@ -52,20 +80,74 @@ Error cg::close_gripper()
   return Error::OK;
 }
 
+/// @brief Function that reads the value from the TOF sensor and sends a digital signal 
+/// wether the distance falls under certain threshold or not.
+/// @return 
+Error read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
+{
+  // Distance in mm to send signal
+  int threshold = 0;
+
+  switch(gripper_type){
+    case CLASSIC:
+      if(tof_mode == POSITIONING) // Positioning with classic gripper
+        threshold = 300;
+      if(tof_mode == DETECTING)   // Detecting with classic gripper
+        threshold = 250;
+    break;
+    case PNEUMATIC:
+      if(tof_mode == POSITIONING) // Positioning with pneumatic gripper
+        threshold = 300;
+      if(tof_mode == DETECTING)   // Detecting with pneumatic gripper
+        threshold = 250;
+    break;
+  }
+
+  // Reading of the TOF using the libraries
+  int distance = lox.readRange();
+ 
+
+  // Send signal if measured distance is closer than threshold
+  if(distance < threshold)
+    DISTANCE_THRESHOLD_SIGNAL = true;
+  else
+    DISTANCE_THRESHOLD_SIGNAL = false;
+
+  Serial.println(distance);
+
+  return Error::OK;
+}
+
 void setup() 
 {
   /******* Declaration of pin modes *******/
 
-  // Classic Gripper
-  pinMode(cg::PIN_CURRENTSENSOR, INPUT);
-  pinMode(cg::PIN_MOTOR, OUTPUT);
 
-  /***************************************/
+  // Classic Gripper
+  // pinMode(cg::PIN_CURRENTSENSOR, INPUT);
+  // pinMode(cg::PIN_MOTOR, OUTPUT);
+  // pinMode(cg::PIN_TOF_IN, INPUT);
+  pinMode(cg::PIN_TOF_OUT, OUTPUT);
+
+  DISTANCE_THRESHOLD_SIGNAL = false;
+
+  /****************************************/
+  // TOF activation
+    if (!lox.begin()) {
+      Serial.println(F("Failed to boot VL53L0X"));
+      while(1);
+    }
+  lox.begin();
 
   Serial.begin(9600);
 }
 
 void loop() 
 {
-  cg::close_gripper();
+  //cg::close_gripper();
+  read_TOF(CLASSIC, POSITIONING);
+  digitalWrite(cg::PIN_TOF_OUT, DISTANCE_THRESHOLD_SIGNAL);
+  // Serial.print("Signal sent: ");
+  // Serial.println(DISTANCE_THRESHOLD_SIGNAL);
+
 }
