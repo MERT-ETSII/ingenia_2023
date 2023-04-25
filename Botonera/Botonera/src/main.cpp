@@ -129,10 +129,10 @@ void loop()
       // Display
       Lcd.print("ESPERANDO LLAMADA");
 
-      if(B_Llamar.isPressed())
+      if(!B_Llamar.getState())
       {
         // Cambiar el registro que se necesario para que venga el agv
-        // ---
+        mb.writeCoil(remote,COIL_MISION_2, HIGH);
 
         // Cambiamos al siguiente estado
         Estado = S1_AGV_MOVIENDOSE_A_PUESTO;
@@ -352,7 +352,7 @@ void loop()
       }
 
       // Si pulsamos enviar
-      if(B_Enviar.isPressed())
+      if(!B_Enviar.getState())
       {
         // Guardamos los datos de las piezas en los registros
         for(uint8_t i = 0; i < NUM_MAX_UTILLAJES; i++)
@@ -361,6 +361,7 @@ void loop()
         }
 
         // Habria que activar el trigger para que vaya hacia el robot
+        mb.writeCoil(remote, COIL_MISION_2, HIGH);
 
         Estado = S7_PULSADO_ENVIAR;
         previousMillis = millis();

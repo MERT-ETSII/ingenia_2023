@@ -87,7 +87,9 @@ const uint16_t REG_PIEZAS[NUM_MAX_UTILLAJES] =
 
 
 
-
+// Trigger mision para que vaya a puesto
+const uint16_t COIL_MISION_1 = 100;
+const uint16_t COIL_MISION_2 = 101;
 
 
 
