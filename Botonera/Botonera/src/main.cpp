@@ -47,7 +47,8 @@ int ledState = LOW;
 uint16_t pos_agv;
 
 // Codigo de fallo y pieza
-uint16_t buffer_fallo;
+uint16_t buffer_fallo; // 0-
+uint16_t buffer_superficie;
 uint16_t buffer_pos;
 char aux;
 
@@ -192,12 +193,50 @@ void loop()
       // Cambio de estado ssi se ha pulsado aceptar (a) y se ha introducido un fallo valido (fallo != -1)
       if(buffer_fallo != -1 && aux == ACEPTAR)
       {
-        Estado = S3_ESPERANDO_POS_PIEZA;
+        Estado = S4_ESPERANDO_POS_PIEZA;
         buffer_pos = -1; // Para poder comprobar si se ha introducido
       }
     }
 
-    if(Estado == S3_ESPERANDO_POS_PIEZA)
+    if(Estado == S3_ESPERANDO_CODIGO_FALLO_SUPERFICIE)
+    {
+      // LED llamar parpadea
+      if(millis() - previousMillis >= interval)
+      {
+        ledState != ledState;
+        previousMillis = millis();
+      }
+      digitalWrite(PIN_LED_LLAMAR, ledState);
+
+      // Lcd
+      Lcd.setCursor(0,0);
+      Lcd.print("Introducir superficie del fallo");
+
+      // Leemos el teclado
+      aux = Teclado.getKey();
+
+      // Si aux es un num lo anadimos al final del codigo del fallo
+      if (aux >= '0' && aux <= '9')
+      {
+      int aux_ = aux - '0';
+      buffer_superficie = (uint16_t) aux_;
+      }
+
+      // Lo mostramos en la segunda linea de la pantalla
+      Lcd.setCursor(0,1);
+      Lcd.print(buffer_superficie);
+      
+      
+
+      // Cambio de estado ssi se ha pulsado aceptar (a) y se ha introducido un fallo valido (fallo != -1)
+      if(buffer_superficie != -1 && aux == ACEPTAR)
+      {
+        Estado = S4_ESPERANDO_POS_PIEZA;
+        buffer_pos = -1; // Para poder comprobar si se ha introducido
+      }
+    }
+
+    if(Estado == S4_ESPERANDO_POS_PIEZA)
     {
       // LED llamar parpadea
       if(millis() - previousMillis >= interval)
@@ -237,17 +276,14 @@ void loop()
       // Si se ha introducido correctamente y se pulsa aceptar pasamos a siguiente pantalla
       if(aux == ACEPTAR && buffer_pos != -1)
       {
-        Estado == S4_ANADIR_OTRA_PIEZA;
+        Estado == S5_ESPERANDO_ENVIAR;
 
         // Almacenamos que fallo hay en que posicion (0 si no hay pieza)
-        datos_piezas[buffer_pos] = buffer_fallo;
+        datos_piezas[buffer_pos] = buffer_fallo * 10 + buffer_superficie;
       }
-
-
-
     }
 
-    if(Estado == S4_ANADIR_OTRA_PIEZA)
+    if(Estado == S6_ANADIR_OTRA_PIEZA)
     {
       // LED llamar parpadea
       if(millis() - previousMillis >= interval)
@@ -312,7 +348,7 @@ void loop()
       // Si pulsamos atras
       if(aux == ATRAS)
       {
-        Estado = S4_ANADIR_OTRA_PIEZA;
+        Estado = S6_ANADIR_OTRA_PIEZA;
       }
 
       // Si pulsamos enviar
@@ -326,14 +362,14 @@ void loop()
 
         // Habria que activar el trigger para que vaya hacia el robot
 
-        Estado = S6_PULSADO_ENVIAR;
+        Estado = S7_PULSADO_ENVIAR;
         previousMillis = millis();
       }
       
  
     }
 
-    if(Estado == S6_PULSADO_ENVIAR)
+    if(Estado == S7_PULSADO_ENVIAR)
     {
       // LED enviar encendido
       // LED llamar parpadea
@@ -361,12 +397,12 @@ void loop()
       }
     }
 
-    if(Estado == S7_REARME)
+    if(Estado == S8_REARME)
     {
 
     }
 
-    if(Estado == S8_STOP)
+    if(Estado == S9_STOP)
     {
 
     }
