@@ -30,12 +30,13 @@ enum state
   S0_IDLE,
   S1_AGV_MOVIENDOSE_A_PUESTO,
   S2_ESPERANDO_CODIGO_FALLO,
-  S3_ESPERANDO_POS_PIEZA,
+  S3_ESPERANDO_CODIGO_FALLO_SUPERFICIE,
+  S4_ESPERANDO_POS_PIEZA,
   S5_ESPERANDO_ENVIAR,
-  S4_ANADIR_OTRA_PIEZA,
-  S6_PULSADO_ENVIAR,
-  S7_REARME,
-  S8_STOP
+  S6_ANADIR_OTRA_PIEZA,
+  S7_PULSADO_ENVIAR,
+  S8_REARME,
+  S9_STOP
 };
 
 // Tiempo en ms durante el cual se permanece en el estado S6
@@ -86,7 +87,9 @@ const uint16_t REG_PIEZAS[NUM_MAX_UTILLAJES] =
 
 
 
-
+// Trigger mision para que vaya a puesto
+const uint16_t COIL_MISION_1 = 100;
+const uint16_t COIL_MISION_2 = 101;
 
 
 
