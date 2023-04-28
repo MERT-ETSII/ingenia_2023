@@ -12,32 +12,31 @@
 #include "classic_gripper.h"
 
 /******* Generic initializations  *******/
-/// @brief Possible configurations for the TOF sensor
-enum TOFMODE
-{
-  POSITIONING = 0,
-  DETECTING = 1
-};
-
-/// @brief Available grippers
-enum GRIPPER
-{
-  CLASSIC = 0,
-  PNEUMATIC = 1
-};
-
 
 // State variables
-GRIPPER gripper_type = CLASSIC;
-TOFMODE tof_mode = POSITIONING;
+GRIPPER gripper_type = GRIPPER::CLASSIC;
+TOFMODE tof_mode = TOFMODE::POSITIONING;
 
 // TOF variables
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 VL53L0X_RangingMeasurementData_t measure;
 bool DISTANCE_THRESHOLD_SIGNAL;
+bool TOF_AVAILABLE;
 
 /****************************************/
 
+UC_MODE common::read_ur_task()
+{
+  bool is_tof_requested = digitalRead(common::PIN_TOF_IN);
+  // Check the rest of the inputs and program state logic
+  // ...
+
+  if(is_tof_requested)
+    return UC_MODE::SEND_TOF_SIGNAL;
+  else
+    return UC_MODE::IDLE;
+
+}
 
 float cg::get_current(int n_samples)
 {
@@ -49,7 +48,7 @@ float cg::get_current(int n_samples)
   float current = 0;
   for(int i=0;i<n_samples;i++)
   {
-    voltage_sensor = (analogRead(cg::PIN_CURRENTSENSOR) - 553.2731257)/31.17464354;
+    voltage_sensor = (analogRead(common::PIN_CURRENTSENSOR) - 553.2731257)/31.17464354;
     current += voltage_sensor;
   }
   current = current/n_samples;
@@ -61,7 +60,7 @@ Error cg::close_gripper()
   float I=cg::get_current(200); //Read current over 200 samples
 
   // TO DO: Don't use delays
-  digitalWrite(cg::PIN_MOTOR, HIGH);  // Run motor 500 ms
+  digitalWrite(common::PIN_MOTOR, HIGH);  // Run motor 500 ms
   delay(500);
 
   unsigned long init_time = millis();
@@ -71,34 +70,36 @@ Error cg::close_gripper()
     // Stop the motor and exit
     if(millis() - init_time > cg::MAX_CLOSING_TIME_MILLIS)
       {
-        digitalWrite(cg::PIN_MOTOR, LOW);  // Stop motor
+        digitalWrite(common::PIN_MOTOR, LOW);  // Stop motor
         return Error::TIMEOUT;
       }
   }
 
-  digitalWrite(cg::PIN_MOTOR, LOW);  // Stop motor
+  digitalWrite(common::PIN_MOTOR, LOW);  // Stop motor
   return Error::OK;
 }
 
-/// @brief Function that reads the value from the TOF sensor and sends a digital signal 
-/// wether the distance falls under certain threshold or not.
-/// @return 
-Error read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
+Error common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
 {
+  if(!TOF_AVAILABLE)
+    TOF_AVAILABLE = lox.begin();
+  if(!TOF_AVAILABLE)
+    return Error::TOF_UNAVAILABLE;
+
   // Distance in mm to send signal
   int threshold = 0;
 
   switch(gripper_type){
-    case CLASSIC:
-      if(tof_mode == POSITIONING) // Positioning with classic gripper
+    case GRIPPER::CLASSIC:
+      if(tof_mode == TOFMODE::POSITIONING) // Positioning with classic gripper
         threshold = 300;
-      if(tof_mode == DETECTING)   // Detecting with classic gripper
+      if(tof_mode == TOFMODE::DETECTING)   // Detecting with classic gripper
         threshold = 250;
     break;
-    case PNEUMATIC:
-      if(tof_mode == POSITIONING) // Positioning with pneumatic gripper
+    case GRIPPER::PNEUMATIC:
+      if(tof_mode == TOFMODE::POSITIONING) // Positioning with pneumatic gripper
         threshold = 300;
-      if(tof_mode == DETECTING)   // Detecting with pneumatic gripper
+      if(tof_mode == TOFMODE::DETECTING)   // Detecting with pneumatic gripper
         threshold = 250;
     break;
   }
@@ -108,11 +109,9 @@ Error read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
  
 
   // Send signal if measured distance is closer than threshold
-  if(distance < threshold)
-    DISTANCE_THRESHOLD_SIGNAL = true;
-  else
-    DISTANCE_THRESHOLD_SIGNAL = false;
+  DISTANCE_THRESHOLD_SIGNAL = distance < threshold;
 
+  Serial.println("[TOF]: ");
   Serial.println(distance);
 
   return Error::OK;
@@ -124,30 +123,68 @@ void setup()
 
 
   // Classic Gripper
-  // pinMode(cg::PIN_CURRENTSENSOR, INPUT);
-  // pinMode(cg::PIN_MOTOR, OUTPUT);
-  // pinMode(cg::PIN_TOF_IN, INPUT);
-  pinMode(cg::PIN_TOF_OUT, OUTPUT);
+  pinMode(common::PIN_CURRENTSENSOR, INPUT);
+  pinMode(common::PIN_MOTOR, OUTPUT);
+  pinMode(common::PIN_TOF_IN, INPUT);
+  pinMode(common::PIN_TOF_OUT, OUTPUT);
 
   DISTANCE_THRESHOLD_SIGNAL = false;
 
   /****************************************/
   // TOF activation
-    if (!lox.begin()) {
-      Serial.println(F("Failed to boot VL53L0X"));
-      while(1);
-    }
-  lox.begin();
-
   Serial.begin(9600);
+  
+  TOF_AVAILABLE = lox.begin();
+
 }
 
 void loop() 
 {
-  //cg::close_gripper();
-  read_TOF(CLASSIC, POSITIONING);
-  digitalWrite(cg::PIN_TOF_OUT, DISTANCE_THRESHOLD_SIGNAL);
-  // Serial.print("Signal sent: ");
-  // Serial.println(DISTANCE_THRESHOLD_SIGNAL);
+  // Update the state of the UC
+  UC_MODE uc_mode = common::read_ur_task();
 
+  // Initialise output variable
+  Error output = Error::NO_INSTRUCTION;
+
+  // Perform actions depending on state
+  switch(uc_mode)
+  {
+    // Idle
+    case UC_MODE::IDLE:
+      Serial.println("Idling...");
+      break;
+
+    // Request of distance from UR
+    case UC_MODE::SEND_TOF_SIGNAL:
+      Serial.println("Reading TOF");
+      output = common::read_TOF(GRIPPER::CLASSIC, TOFMODE::POSITIONING);
+
+      if(output == Error::TOF_UNAVAILABLE)
+        Serial.println("TOF sensor unavailable");
+      if(output == Error::OK)
+        digitalWrite(common::PIN_TOF_OUT, DISTANCE_THRESHOLD_SIGNAL);
+      break;
+
+    // Request of close gripper from UR
+    case UC_MODE::CLOSE_GRIPPER:
+      Serial.println("Closing gripper");
+      output = cg::close_gripper();
+
+      if(output == Error::OK)
+        Serial.println("Gripper closed");
+      if(output == Error::TIMEOUT)
+        Serial.println("TIMEOUT - Stop closing");
+      break;
+
+    // Request of open gripper from UR
+    case UC_MODE::OPEN_GRIPPER:
+      Serial.println("Not implemented");
+      break;
+
+    // Default state (should not happen)
+    default:
+      Serial.println("ERROR");
+      break;
+
+  }
 }
