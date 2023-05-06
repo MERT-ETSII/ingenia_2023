@@ -15,7 +15,6 @@
 
 
 // Descomentar para comprobar funcionamiento correcto de los botones. 
-
 //#define DEBUG_BUTTONS
 
 
@@ -50,8 +49,8 @@ const long int T_S6 = 5000;
 // --- Conexion wifi ---
 
 // Wifi password and SSID
-const char* ssid = "SMARTMAI";
-const char* password = "unidad_fabri";
+const char* ssid = "RG";//"SMARTMAI";
+const char* password = "tengo2perros";//"unidad_fabri";
 
 // Direccion del servidor
 IPAddress remote(192, 168, 0, 29);  // Direccion del servidor

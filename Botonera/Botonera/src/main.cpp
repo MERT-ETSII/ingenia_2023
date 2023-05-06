@@ -69,12 +69,15 @@ void setup()
   Lcd.backlight();
   Lcd.print("Inicializando...");
 
+
+  
   // Inicializamos teclado
   Teclado.begin(makeKeymap(keys));
 
   // Inicializacion puerto serie
   Serial.begin(115200);
 
+#ifndef DEBUG_BUTTONS
 
   // Configuracion conexion wifi
   WiFi.begin(ssid,password);
@@ -91,29 +94,50 @@ void setup()
   // COnfiguramos modbus como cliente
   mb.client();
 
+  #endif
+
   // Configuramos como salidas los pines de los leds
   pinMode(PIN_LED_ENVIAR, OUTPUT);
   pinMode(PIN_LED_LLAMAR, OUTPUT);
   pinMode(PIN_LED_REARME, OUTPUT);
 
-  Lcd.print("Inicializado correctamente");
+  Lcd.clear();
+  Lcd.setCursor(0,0);
+    Lcd.print("Inicializando...");
+    Lcd.setCursor(0,1);
+    Lcd.print("Listo");
   Estado = S0_IDLE;
   delay(2000);
+
+  Lcd.clear();
+  Lcd.print("[ 4.Tech ]");
+  delay(1000);
+  B_Llamar.loop();
+  while(B_Llamar.getState())
+  {
+    B_Llamar.loop();
+  }
+
+  Lcd.clear();
 
 }
 
 // ================================================= Loop ======================================
 void loop()
 {
-#ifndef DEBUG_BUTTONS
-  // Libreria modbus hace sus cosas
-  mb.task();
 
   // Librearias de los botones hacen sus cosas
   B_Enviar.loop();
   B_Llamar.loop();
   B_Rearmar.loop();
   B_Stop.loop();
+#ifndef DEBUG_BUTTONS
+
+
+  // Libreria modbus hace sus cosas
+  mb.task();
+
+  
 
   // Si estamos conectados
   if(mb.isConnected(remote))
@@ -127,7 +151,12 @@ void loop()
       digitalWrite(PIN_LED_REARME, LOW);
 
       // Display
-      Lcd.print("ESPERANDO LLAMADA");
+      Lcd.clear();
+      Lcd.setCursor(0,0);
+      Lcd.print("Esperando");
+      Lcd.setCursor(0,1);
+      Lcd.print("llamada");
+      
 
       if(!B_Llamar.getState())
       {
@@ -171,7 +200,9 @@ void loop()
       digitalWrite(PIN_LED_LLAMAR, ledState);
 
       // Lcd
+      Lcd.clear();
       Lcd.setCursor(0,0);
+      
       Lcd.print("Introduce codigo de fallo");
 
       // Leemos el teclado
@@ -209,6 +240,7 @@ void loop()
       digitalWrite(PIN_LED_LLAMAR, ledState);
 
       // Lcd
+      Lcd.clear();
       Lcd.setCursor(0,0);
       Lcd.print("Introducir superficie del fallo");
 
@@ -250,6 +282,7 @@ void loop()
 
       // Lcd
       Lcd.setCursor(0,0);
+      Lcd.clear();
       Lcd.print("Introduce posicion");
 
       // Leemos el teclado
@@ -330,6 +363,7 @@ void loop()
       digitalWrite(PIN_LED_ENVIAR, LOW);
 
       // Lcd
+      Lcd.clear();
       Lcd.setCursor(0,0);
       Lcd.print("Listo para enviar");
 
@@ -380,6 +414,7 @@ void loop()
 
       // Nos quedamos en este estado un cierto tiempo antes de pasar a IDLE
       // Lcd
+      Lcd.clear();
       Lcd.setCursor(0,0);
       Lcd.print("Enviado!");
       
@@ -412,6 +447,11 @@ void loop()
   }
   else
   {
+
+    Lcd.setCursor(0,0);
+    Lcd.print("ERROR:");
+    Lcd.setCursor(0,1);
+    Lcd.print("No remote");
     mb.connect(remote);
   }
 #endif
@@ -419,40 +459,49 @@ void loop()
 #ifdef DEBUG_BUTTONS
 
   // Boton enviar
-  if(B_Enviar.isPressed()) 
+  if(!B_Enviar.getState()) 
   {
+     
+    Lcd.print("ENVIAR");
     Serial.println("ENVIAR pulsado");
     digitalWrite(PIN_LED_ENVIAR, HIGH);
   }
   else
   {
+    Lcd.clear();
     digitalWrite(PIN_LED_ENVIAR, LOW);
   }
 
   // Boton llamar
-  if(B_Llamar.isPressed()) 
+  if(!B_Llamar.getState()) 
   {
+    
+    Lcd.print("Llamar");
     Serial.println("Llamar pulsado");
     digitalWrite(PIN_LED_LLAMAR, HIGH);
   }
   else
   {
+    Lcd.clear();
     digitalWrite(PIN_LED_LLAMAR, LOW);
   }
 
   // Boton rearme
-  if(B_Rearmar.isPressed()) 
+  if(!B_Rearmar.getState()) 
   {
+    
+    Lcd.print("REARMAR");
     Serial.println("REARMAR pulsado");
     digitalWrite(PIN_LED_REARME, HIGH);
   }
   else
   {
+    Lcd.clear();
     digitalWrite(PIN_LED_REARME, LOW);
   }
   
   // Boton stop
-  if(B_Stop.isPressed()) 
+  if(!B_Stop.getState()) 
   {
     Serial.println("REARMAR pulsado");
     digitalWrite(PIN_LED_REARME, HIGH);
@@ -464,6 +513,10 @@ void loop()
     digitalWrite(PIN_LED_LLAMAR, LOW);
   }
 
+ 
+    char key = Teclado.getKey();
+    Lcd.clear();
+    Lcd.print(key);
   
   
 
