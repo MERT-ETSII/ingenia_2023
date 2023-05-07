@@ -15,6 +15,7 @@
 
 
 // Descomentar para comprobar funcionamiento correcto de los botones. 
+#define NO_MODBUS
 //#define DEBUG_BUTTONS
 
 
