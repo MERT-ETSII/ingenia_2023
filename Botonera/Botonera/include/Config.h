@@ -15,7 +15,7 @@
 
 
 // Descomentar para comprobar funcionamiento correcto de los botones. 
-#define NO_MODBUS
+//#define NO_MODBUS
 //#define DEBUG_BUTTONS
 
 
@@ -50,8 +50,8 @@ const long int T_S6 = 5000;
 // --- Conexion wifi ---
 
 // Wifi password and SSID
-const char* ssid = "RG";//"SMARTMAI";
-const char* password = "tengo2perros";//"unidad_fabri";
+const char* ssid = "SMARTMAI";
+const char* password = "unidad_fabri";
 
 // Direccion del servidor
 IPAddress remote(192, 168, 0, 29);  // Direccion del servidor
@@ -65,20 +65,20 @@ IPAddress remote(192, 168, 0, 29);  // Direccion del servidor
 // 2 -> En puesto UR
 // 3 -> en movimiento
 
-const uint16_t REG_POS_AGV = 1000;
+const uint16_t REG_POS_AGV = 1191;
 const uint16_t EN_MOVIMIENTO = 3;
 const uint16_t EN_CARGA = 0;
-const uint16_t EN_UR = 1;
-const uint16_t EN_OPERARIO = 2;
+const uint16_t EN_UR = 2;
+const uint16_t EN_OPERARIO = 1;
 
 // Registros para info de las piezas
 const uint16_t REG_PIEZAS[NUM_MAX_UTILLAJES] = 
 {
-  1199, // Pos 0      ======= AGV =========               
-  1200, // Pos 1      -------------------
-  1201, // Pos 2      |  [0]        [1]  |
-  1202, // Pos 3      |                  |
-  1203  // Pos 4      |                  |
+  1181, // Pos 0      ======= AGV =========               
+  1183, // Pos 1      -------------------
+  1185, // Pos 2      |  [0]        [1]  |
+  1187, // Pos 3      |                  |
+  1189  // Pos 4      |                  |
 };      //            |       [2]        |   
                    // |                  |
                    // |                  |
@@ -88,8 +88,8 @@ const uint16_t REG_PIEZAS[NUM_MAX_UTILLAJES] =
 
 
 // Trigger mision para que vaya a puesto
-const uint16_t COIL_MISION_1 = 100;
-const uint16_t COIL_MISION_2 = 101;
+const uint16_t COIL_MISION_1 = 1030;
+const uint16_t COIL_MISION_2 = 1031;
 
 
 

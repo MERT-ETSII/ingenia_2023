@@ -211,7 +211,7 @@ void loop()
       {
         #ifndef NO_MODBUS
         // Cambiar el registro que se necesario para que venga el agv
-        mb.writeCoil(remote,COIL_MISION_2, HIGH);
+        mb.writeCoil(remote,COIL_MISION_1, HIGH);
         #endif
         // Cambiamos al siguiente estado
         Lcd.clear();
@@ -242,9 +242,10 @@ void loop()
 
       #ifndef NO_MODBUS
       // Comprobamos si ha llegado al puesto de operario
-      if(pos_agv == EN_OPERARIO)
+      if(pos_agv == EN_OPERARIO || key_pulsada == ACEPTAR)
       #else
       if(key_pulsada == ACEPTAR)
+      #endif
       {
         Lcd.clear();
         Estado = S2_ESPERANDO_CODIGO_FALLO;
@@ -402,6 +403,7 @@ void loop()
       if(aux == ATRAS)
       {
         Estado = S2_ESPERANDO_CODIGO_FALLO;
+        Lcd.clear();
       }
 
       // Si se ha introducido correctamente y se pulsa aceptar pasamos a siguiente pantalla
@@ -518,7 +520,7 @@ void loop()
           #endif
 
           str = str + " registro: "  + String(REG_PIEZAS[i]) + " dato_pieza: " + String(datos_piezas[i]) + "\n"; 
-
+          delay(200);
         }
 
         #ifndef NO_MODBUS
@@ -576,19 +578,34 @@ void loop()
 
     }
 
+    if(key_pulsada == 'c')
+    {
+      // Ponemos todos los buffers y datos a default
+        buffer_fallo = 0;
+        buffer_pos = 0;  
+        for(uint8_t i = 0; i < NUM_MAX_UTILLAJES; i++)
+        {
+          datos_piezas[i] = 0;
+        }
+
+        // Volvemos al estado inicial
+        Estado = S0_IDLE;
+      Lcd.clear();
+    }
+
 
   }
   else
   {
 
     Lcd.setCursor(0,0);
-    Lcd.print("ERROR:");
+    Lcd.print("ERROR: No");
     Lcd.setCursor(0,1);
-    Lcd.print("No remote");
+    Lcd.print("remote");
     mb.connect(remote);
   }
 #endif
-#endif
+
 
 #ifdef DEBUG_BUTTONS
 
@@ -654,7 +671,7 @@ void loop()
   }
 
   Teclado.getKey();
-  
-
+ mbv  
+}
 #endif
 }
