@@ -1,16 +1,6 @@
 #include <Arduino.h>
 #include <Adafruit_VL53L0X.h>
 
-/// @brief Defines the UC state
-enum class UC_MODE
-{
-    ERROR = -1,
-    IDLE = 0,
-    SEND_TOF_SIGNAL = 1,
-    OPEN_GRIPPER = 2,
-    CLOSE_GRIPPER = 3
-};
-
 /// @brief Error handling enum
 enum class Error
 {
@@ -36,31 +26,58 @@ enum class GRIPPER
 
 namespace common
 {
-    /// @brief Analog input from current sensor
-    const uint8_t PIN_CURRENTSENSOR = 2;
+    /// @brief Reserved for communications
+    const uint8_t PIN_TX = 0;
+    /// @brief Reserved for communications
+    const uint8_t PIN_RX = 1;
 
-    /// @brief OFF: CLASSIC; ON: PNEUMATIC
-    const uint8_t PIN_TOF_IN = 3;
+    /// @brief Enable for the motor drive
+    const uint8_t PIN_STBY = 2;
 
-    /// @brief GPIO2 (D4) - OFF: Further than threshold; ON: Closer than threshold
-    const uint8_t PIN_TOF_OUT = 4;
+    /// @brief State of the first terminal of the motor
+    const uint8_t PIN_MOTOR_1 = 3;
 
-    /// @brief OFF: Threshold for positioning of the gripper ON: Threshold for detecting objects
-    const uint8_t PIN_STATE_POSITION_DETECTION = 5;
+    /// @brief State of the second terminal of the motor
+    const uint8_t PIN_MOTOR_2 = 4;
 
-    /// @brief  Digital output to the enable of the motor driver
-    const uint8_t PIN_MOTOR = 6;
+    /// @brief Pin to regulate power output to the motor
+    const uint8_t PIN_MOTOR_PWM = 5;
 
-    /// @brief GPIO4 (D2) - OFF: CLASSIC; ON: PNEUMATIC
+    /// @brief  TRUE: Detection (distance under threshold); FALSE: No detection
+    const uint8_t PIN_TOF_OUT = 6;
+
+    /// @brief  TRUE: Gripper OPEN; FALSE: Gripper CLOSED
+    const uint8_t PIN_GRIPPER_STATE = 7;
+
+    /// @brief  TRUE: Distance to the piece; FALSE: Distance to the L
+    const uint8_t PIN_OPERATION_CONTROL = 8;
+
+    /// @brief  TRUE: pneumatic; FALSE: classic
+    const uint8_t PIN_GRIPPER_TYPE = 9;
+
+    /// @brief  TRUE: open gripper; FALSE: close gripper
+    const uint8_t PIN_GRIPPER_ACTION = 10;
+
+    /// @brief Analog input from the current sensor
+    const uint8_t PIN_CURRENTSENSOR = A0;
+
+    /// @brief For I2C communications with the TOF sensor
     const uint8_t PIN_TOF_SDA = A4;
 
-    /// @brief GPIO5 (D1) - OFF: CLASSIC; ON: PNEUMATIC
+    /// @brief For I2C communications with the TOF sensor
     const uint8_t PIN_TOF_SCL = A5;
 
-    UC_MODE read_ur_task();
+
+    /// @brief Function to read the distance requests from the UR
+    /// @return POSITIONING, for input 0 or DETECTING, for input 1
+    TOFMODE get_tof_configuration();
 
     /// @brief Function that reads the value from the TOF sensor and sends a digital signal 
     /// wether the distance falls under certain threshold or not.
-    /// @return 
+    /// @return 0 for no detection; 1 for detection
     Error read_TOF(GRIPPER gripper_type, TOFMODE tof_mode);
+
+    /// @brief Get the gripper type read from UR
+    /// @return CLASSIC, for input 0 or PNEUMATIC, for input 1
+    GRIPPER get_gripper_type();
 }
