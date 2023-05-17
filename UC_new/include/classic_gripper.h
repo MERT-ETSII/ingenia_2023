@@ -1,3 +1,6 @@
+#ifndef CLASSIC_GRIPPER_H
+#define CLASSIC_GRIPPER_H
+
 #include <Arduino.h>
 #include "pinout.h"
 #include "common.h"
@@ -5,14 +8,14 @@
 namespace cg
 {
     /// @brief Maximum peak current (in Amperes) to the motor until stop signal is sent
-    float CURRENT_THRESHOLD = 0.4;
+    extern float CURRENT_THRESHOLD;
+
+    /// @brief Maximun closing time of the classic gripper
+    extern unsigned long MAX_CLOSING_TIME_MILLIS;
 
     /// @brief Function to obtain current averaged over n samples
     /// @param[in] n_samples: number of iterations to use for current filter
     float get_current(int n_samples);
-
-    /// @brief Maximun closing time of the classic gripper
-    unsigned long MAX_CLOSING_TIME_MILLIS = 3000;
 
     /// @brief Possible actions requested from the UR
     enum class UR_ACTION
@@ -45,3 +48,5 @@ namespace cg
     /// @return The action requested
     UR_ACTION get_action();
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef PINOUT_H
+#define PINOUT_H
+
     #include <Arduino.h>
     
     /// @brief Reserved for communications
@@ -33,3 +36,5 @@
     #define PIN_TOF_SDA A4
     /// @brief For I2C communications with the TOF sensor
     #define PIN_TOF_SCL A5
+
+#endif

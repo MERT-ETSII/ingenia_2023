@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <Arduino.h>
 #include <Adafruit_VL53L0X.h>
 #include "pinout.h"
@@ -27,11 +30,15 @@ namespace type
 
 namespace tof
 {
-    // TOF variables
-    Adafruit_VL53L0X lox = Adafruit_VL53L0X(); // TOF driver
-    VL53L0X_RangingMeasurementData_t measure;  // TOF measured distance
-    bool DISTANCE_THRESHOLD_SIGNAL;
-    bool TOF_AVAILABLE;
+    /// TOF variables
+    // TOF Driver
+    extern Adafruit_VL53L0X lox; 
+    // Tof measurement
+    extern VL53L0X_RangingMeasurementData_t measure; 
+    // Trigger of the threshold distance
+    extern bool DISTANCE_THRESHOLD_SIGNAL;
+    // Is driver working
+    extern bool TOF_AVAILABLE;
 
     /// @brief Possible configurations for the TOF sensor
     enum class TOFMODE
@@ -47,7 +54,7 @@ namespace tof
     /// @brief Function that reads the value from the TOF sensor and sends a digital signal 
     /// wether the distance falls under certain threshold or not.
     /// @return 0 for no detection; 1 for detection
-    ERROR read_TOF(tof::GRIPPER tof::gripper_type, TOFMODE tof_mode);
+    ERROR read_TOF(type::GRIPPER gripper_type, TOFMODE tof_mode);
 }
 
-
+#endif

@@ -9,14 +9,15 @@
 #include <Arduino.h>
 #include <math.h>
 #include "pinout.h"
-// #include "common.h"
 #include "classic_gripper.h"
+
+using namespace type;
 
 /******* Generic initializations  *******/
 
 // State variables
 GRIPPER gripper_type = GRIPPER::CLASSIC;  // Selected gripper
-TOFMODE tof_mode = TOFMODE::POSITIONING;  // TOF configuration
+tof::TOFMODE tof_mode = tof::TOFMODE::POSITIONING;  // TOF configuration
 
 cg::UR_ACTION classic_gripper_state = cg::UR_ACTION::OPEN_GRIPPER;  // To keep track of the gripper position
 
@@ -39,17 +40,18 @@ void setup()
   pinMode(PIN_GRIPPER_ACTION,     INPUT);
   pinMode(PIN_CURRENTSENSOR,      INPUT);
 
-  common::DISTANCE_THRESHOLD_SIGNAL = false;
+  tof::DISTANCE_THRESHOLD_SIGNAL = false;
 
   /****************************************/
 
   // TOF activation
   Serial.begin(9600);
-  common::TOF_AVAILABLE = common::lox.begin();
+  tof::TOF_AVAILABLE = tof::lox.begin();
 
 
   // Check the gripper selected
-  gripper_type = common::get_gripper_type();
+  gripper_type = get_gripper_type();
+
   // For pneumatic gripper, no further actions required
   if(gripper_type != GRIPPER::CLASSIC){
     Serial.println("Initiation of routine.");
@@ -78,23 +80,23 @@ void setup()
 void loop() 
 {
   // Update the gripper selected
-  gripper_type = common::get_gripper_type();
+  gripper_type = get_gripper_type();
   // Debug info
   gripper_type == GRIPPER::CLASSIC ? Serial.println("[UR] Classic gripper selected") : Serial.println("[UR] Pneumatic gripper selected");
 
   // Update the state of the UC
-  tof_mode = common::get_tof_configuration();
+  tof_mode = tof::get_tof_configuration();
   // Debug info
-  tof_mode == TOFMODE::DETECTING ? Serial.println("[UR] TOF configured to detect the pieces") : Serial.println("[UR] TOF configured to detect the L");
+  tof_mode == tof::TOFMODE::DETECTING ? Serial.println("[UR] TOF configured to detect the pieces") : Serial.println("[UR] TOF configured to detect the L");
 
   // 1. Read tof and send signal to ur /////////////////////////////////////////////
   Serial.println("Reading TOF");
-  ERROR tof_output = common::read_TOF(GRIPPER::CLASSIC, TOFMODE::POSITIONING);
+  ERROR tof_output = tof::read_TOF(GRIPPER::CLASSIC, tof::TOFMODE::POSITIONING);
 
   if(tof_output == ERROR::TOF_UNAVAILABLE)
     Serial.println("TOF sensor unavailable");
   if(tof_output == ERROR::OK)
-    digitalWrite(PIN_TOF_OUT, common::DISTANCE_THRESHOLD_SIGNAL);
+    digitalWrite(PIN_TOF_OUT, tof::DISTANCE_THRESHOLD_SIGNAL);
 
   // 2. Operate according to gripper type //////////////////////////////////////////
   // Only classic gripper needs further operations from the UC

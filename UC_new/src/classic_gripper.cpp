@@ -2,6 +2,10 @@
 #include "pinout.h"
 #include "classic_gripper.h"
 
+float cg::CURRENT_THRESHOLD = 0.4;
+
+unsigned long cg::MAX_CLOSING_TIME_MILLIS = 3000;
+
 float cg::get_current(int n_samples)
 {
   // Current in Amperes: (analog reading - 553.2731257)/31.17464354
