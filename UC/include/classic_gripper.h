@@ -17,6 +17,15 @@ namespace cg
         CLOSE_GRIPPER = 1
     };
 
+/*
+    enum class GRIPPER_STATE
+    {
+        ERROR = -1,
+        OPENED = 0,
+        CLOSED =1,
+    }
+*/
+
     /// @brief Function that performs the closing action.
     /// This implies sending a signal to the motor to begin movement, 
     /// read the current sensor until it reaches certain threshold 
@@ -24,7 +33,7 @@ namespace cg
     /// and exiting. 
     /// If the action takes too long, an error is returned.
     /// @return 
-    Error close_gripper();
+    ERROR close_gripper();
 
     /// @brief Function that performs the opening action.
     /// This implies sending a signal to the motor to begin movement, 
@@ -33,7 +42,7 @@ namespace cg
     /// and exiting. 
     /// If the action takes too long, an error is returned.
     /// @return 
-    Error open_gripper();
+    ERROR open_gripper();
 
     /// @brief Function to read the request from the UR
     /// @return The action requested

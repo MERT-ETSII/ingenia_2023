@@ -54,7 +54,7 @@ cg::UR_ACTION cg::get_action(){
   return action_requested ? cg::UR_ACTION::OPEN_GRIPPER : cg::UR_ACTION::CLOSE_GRIPPER;  
 }
 
-Error cg::close_gripper()
+ERROR cg::close_gripper()
 {
   float I=cg::get_current(200); //Read current over 200 samples
 
@@ -78,20 +78,20 @@ Error cg::close_gripper()
         digitalWrite(common::PIN_STBY, LOW); // Disable motor
         digitalWrite(common::PIN_MOTOR_1, LOW);  // Stop motor 
         digitalWrite(common::PIN_MOTOR_2, LOW);  // Stop motor 
-        return Error::TIMEOUT;
+        return ERROR::TIMEOUT;
       }
   }
 
   digitalWrite(common::PIN_STBY, LOW); // Disable motor
   digitalWrite(common::PIN_MOTOR_1, LOW);  // Stop motor 
   digitalWrite(common::PIN_MOTOR_2, LOW);  // Stop motor 
-  return Error::OK;
+  return ERROR::OK;
 }
 
-Error cg::open_gripper()
+ERROR cg::open_gripper()
 {
+  //if(cg::)
   float I=cg::get_current(200); //Read current over 200 samples
-
   // TO DO: Don't use delays
   digitalWrite(common::PIN_STBY, HIGH); // Enable motor
   digitalWrite(common::PIN_MOTOR_PWM, HIGH); // No PWM. Full pawah
@@ -112,22 +112,22 @@ Error cg::open_gripper()
         digitalWrite(common::PIN_STBY, LOW); // Disable motor
         digitalWrite(common::PIN_MOTOR_1, LOW);  // Stop motor 
         digitalWrite(common::PIN_MOTOR_2, LOW);  // Stop motor 
-        return Error::TIMEOUT;
+        return ERROR::TIMEOUT;
       }
   }
 
   digitalWrite(common::PIN_STBY, LOW); // Disable motor
   digitalWrite(common::PIN_MOTOR_1, LOW);  // Stop motor 
   digitalWrite(common::PIN_MOTOR_2, LOW);  // Stop motor 
-  return Error::OK;
+  return ERROR::OK;
 }
 
-Error common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
+ERROR common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
 {
   if(!TOF_AVAILABLE)
     TOF_AVAILABLE = lox.begin();
   if(!TOF_AVAILABLE)
-    return Error::TOF_UNAVAILABLE;
+    return ERROR::TOF_UNAVAILABLE;
 
   // Distance in mm to send signal
   int threshold = 0;
@@ -157,7 +157,7 @@ Error common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
   Serial.println("[TOF]: ");
   Serial.println(distance);
 
-  return Error::OK;
+  return ERROR::OK;
 }
 
 GRIPPER common::get_gripper_type()
@@ -202,13 +202,13 @@ void setup()
     
 
   // Open gripper to begin tasks
-  Error open_output = cg::open_gripper();
-  if(open_output == Error::OK){
+  ERROR open_output = cg::open_gripper();
+  if(open_output == ERROR::OK){
     Serial.println("Gripper opened. Initiation of routine.");
     classic_gripper_state = cg::UR_ACTION::OPEN_GRIPPER;
     return;
   }
-  if(open_output == Error::TIMEOUT){
+  if(open_output == ERROR::TIMEOUT){
     Serial.println("Gripper not fully opened. Initiation of routine with errors.");
     classic_gripper_state = cg::UR_ACTION::ERROR;
     return;
@@ -233,11 +233,11 @@ void loop()
 
   // 1. Read tof and send signal to ur /////////////////////////////////////////////
   Serial.println("Reading TOF");
-  Error tof_output = common::read_TOF(GRIPPER::CLASSIC, TOFMODE::POSITIONING);
+  ERROR tof_output = common::read_TOF(GRIPPER::CLASSIC, TOFMODE::POSITIONING);
 
-  if(tof_output == Error::TOF_UNAVAILABLE)
+  if(tof_output == ERROR::TOF_UNAVAILABLE)
     Serial.println("TOF sensor unavailable");
-  if(tof_output == Error::OK)
+  if(tof_output == ERROR::OK)
     digitalWrite(common::PIN_TOF_OUT, DISTANCE_THRESHOLD_SIGNAL);
 
   // 2. Operate according to gripper type //////////////////////////////////////////
@@ -261,8 +261,8 @@ void loop()
         Serial.println("Gripper already opened");
         break;
       }
-      Error opening_output = cg::open_gripper();
-      if(opening_output == Error::OK)
+      ERROR opening_output = cg::open_gripper();
+      if(opening_output == ERROR::OK)
       {
         Serial.println("Gripper opened successfully");
         classic_gripper_state = cg::UR_ACTION::OPEN_GRIPPER;
@@ -287,8 +287,8 @@ void loop()
         Serial.println("Gripper already closed");
         break;
       }
-      Error closing_output = cg::close_gripper();
-      if(closing_output == Error::OK)
+      ERROR closing_output = cg::close_gripper();
+      if(closing_output == ERROR::OK)
       {
         Serial.println("Gripper closed successfully");
         classic_gripper_state = cg::UR_ACTION::CLOSE_GRIPPER;
