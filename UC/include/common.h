@@ -11,21 +11,21 @@ enum class ERROR
     TOF_UNAVAILABLE = -3
 };
 
-/// @brief Possible configurations for the TOF sensor
-enum  class TOFMODE
+namespace type
 {
-    POSITIONING = 0,
-    DETECTING = 1
-};
+    /// @brief Available grippers
+    enum class GRIPPER
+    {
+        CLASSIC = 0,
+        PNEUMATIC = 1
+    };
 
-/// @brief Available grippers
-enum class GRIPPER
-{
-    CLASSIC = 0,
-    PNEUMATIC = 1
-};
+    /// @brief Get the gripper type read from UR
+    /// @return CLASSIC, for input 0 or PNEUMATIC, for input 1
+    GRIPPER get_gripper_type();
+}
 
-namespace common
+namespace tof
 {
     // TOF variables
     Adafruit_VL53L0X lox = Adafruit_VL53L0X(); // TOF driver
@@ -33,6 +33,12 @@ namespace common
     bool DISTANCE_THRESHOLD_SIGNAL;
     bool TOF_AVAILABLE;
 
+    /// @brief Possible configurations for the TOF sensor
+    enum class TOFMODE
+    {
+        POSITIONING = 0,
+        DETECTING = 1
+    };
     
     /// @brief Function to read the distance requests from the UR
     /// @return POSITIONING, for input 0 or DETECTING, for input 1
@@ -41,11 +47,7 @@ namespace common
     /// @brief Function that reads the value from the TOF sensor and sends a digital signal 
     /// wether the distance falls under certain threshold or not.
     /// @return 0 for no detection; 1 for detection
-    ERROR read_TOF(GRIPPER gripper_type, TOFMODE tof_mode);
-
-    /// @brief Get the gripper type read from UR
-    /// @return CLASSIC, for input 0 or PNEUMATIC, for input 1
-    GRIPPER get_gripper_type();
+    ERROR read_TOF(tof::GRIPPER tof::gripper_type, TOFMODE tof_mode);
 }
 
 

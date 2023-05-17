@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <math.h>
 #include "pinout.h"
-#include "common.h"
+// #include "common.h"
 #include "classic_gripper.h"
 
 /******* Generic initializations  *******/
@@ -17,27 +17,27 @@
 // State variables
 GRIPPER gripper_type = GRIPPER::CLASSIC;  // Selected gripper
 TOFMODE tof_mode = TOFMODE::POSITIONING;  // TOF configuration
+
 cg::UR_ACTION classic_gripper_state = cg::UR_ACTION::OPEN_GRIPPER;  // To keep track of the gripper position
 
 /****************************************/
-
 
 
 void setup() 
 {
   /******* Declaration of pin modes *******/
 
-  pinMode(common::PIN_STBY,           OUTPUT);
-  pinMode(common::PIN_MOTOR_1,        OUTPUT);
-  pinMode(common::PIN_MOTOR_2,        OUTPUT);
-  pinMode(common::PIN_MOTOR_PWM,      OUTPUT);
-  pinMode(common::PIN_TOF_OUT,        OUTPUT);
-  pinMode(common::PIN_GRIPPER_STATE,  OUTPUT);
+  pinMode(PIN_STBY,           OUTPUT);
+  pinMode(PIN_MOTOR_1,        OUTPUT);
+  pinMode(PIN_MOTOR_2,        OUTPUT);
+  pinMode(PIN_MOTOR_PWM,      OUTPUT);
+  pinMode(PIN_TOF_OUT,        OUTPUT);
+  pinMode(PIN_GRIPPER_STATE,  OUTPUT);
 
-  pinMode(common::PIN_OPERATION_CONTROL,  INPUT);
-  pinMode(common::PIN_GRIPPER_TYPE,       INPUT);
-  pinMode(common::PIN_GRIPPER_ACTION,     INPUT);
-  pinMode(common::PIN_CURRENTSENSOR,      INPUT);
+  pinMode(PIN_OPERATION_CONTROL,  INPUT);
+  pinMode(PIN_GRIPPER_TYPE,       INPUT);
+  pinMode(PIN_GRIPPER_ACTION,     INPUT);
+  pinMode(PIN_CURRENTSENSOR,      INPUT);
 
   common::DISTANCE_THRESHOLD_SIGNAL = false;
 
@@ -47,6 +47,7 @@ void setup()
   Serial.begin(9600);
   common::TOF_AVAILABLE = common::lox.begin();
 
+
   // Check the gripper selected
   gripper_type = common::get_gripper_type();
   // For pneumatic gripper, no further actions required
@@ -54,8 +55,8 @@ void setup()
     Serial.println("Initiation of routine.");
     return; 
   }
+   
     
-
   // Open gripper to begin tasks
   ERROR open_output = cg::open_gripper();
   if(open_output == ERROR::OK){
@@ -93,7 +94,7 @@ void loop()
   if(tof_output == ERROR::TOF_UNAVAILABLE)
     Serial.println("TOF sensor unavailable");
   if(tof_output == ERROR::OK)
-    digitalWrite(common::PIN_TOF_OUT, common::DISTANCE_THRESHOLD_SIGNAL);
+    digitalWrite(PIN_TOF_OUT, common::DISTANCE_THRESHOLD_SIGNAL);
 
   // 2. Operate according to gripper type //////////////////////////////////////////
   // Only classic gripper needs further operations from the UC
@@ -161,5 +162,5 @@ void loop()
 
   // 4. Send updated information to the UR /////////////////////////////////////////
   if(classic_gripper_state != cg::UR_ACTION::ERROR)
-    digitalWrite(common::PIN_GRIPPER_STATE, classic_gripper_state == cg::UR_ACTION::OPEN_GRIPPER);
+    digitalWrite(PIN_GRIPPER_STATE, classic_gripper_state == cg::UR_ACTION::OPEN_GRIPPER);
 }

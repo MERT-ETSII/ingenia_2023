@@ -5,15 +5,15 @@
 
 TOFMODE common::get_tof_configuration()
 {
-  bool operation_control = digitalRead(common::PIN_OPERATION_CONTROL);
+  bool operation_control = digitalRead(PIN_OPERATION_CONTROL);
   return operation_control ? TOFMODE::DETECTING : TOFMODE::POSITIONING;
 }
 
 ERROR common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
 {
-  if(!TOF_AVAILABLE)
-    TOF_AVAILABLE = lox.begin();
-  if(!TOF_AVAILABLE)
+  if(!common::TOF_AVAILABLE)
+    common::TOF_AVAILABLE = common::lox.begin();
+  if(!common::TOF_AVAILABLE)
     return ERROR::TOF_UNAVAILABLE;
 
   // Distance in mm to send signal
@@ -35,11 +35,11 @@ ERROR common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
   }
 
   // Reading of the TOF using the libraries
-  int distance = lox.readRange();
+  int distance = common::lox.readRange();
  
 
   // Send signal if measured distance is closer than threshold
-  DISTANCE_THRESHOLD_SIGNAL = distance < threshold;
+  common::DISTANCE_THRESHOLD_SIGNAL = distance < threshold;
 
   Serial.println("[TOF]: ");
   Serial.println(distance);
@@ -49,6 +49,6 @@ ERROR common::read_TOF(GRIPPER gripper_type, TOFMODE tof_mode)
 
 GRIPPER common::get_gripper_type()
 {
-  bool gripper_signal = digitalRead(common::PIN_GRIPPER_TYPE);
+  bool gripper_signal = digitalRead(PIN_GRIPPER_TYPE);
   return gripper_signal ? GRIPPER::PNEUMATIC : GRIPPER::CLASSIC;
 }
