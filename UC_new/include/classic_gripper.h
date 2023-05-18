@@ -13,6 +13,12 @@ namespace cg
     /// @brief Maximun closing time of the classic gripper
     extern unsigned long MAX_CLOSING_TIME_MILLIS;
 
+    /// @brief Closing time of the classic gripper with no sensor reading
+    extern unsigned int MIN_TIME_MILLIS;
+
+    /// @brief Motor speed value
+    extern unsigned int PWM_VALUE;
+
     /// @brief Function to obtain current averaged over n samples
     /// @param[in] n_samples: number of iterations to use for current filter
     float get_current(int n_samples);

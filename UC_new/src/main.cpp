@@ -40,14 +40,15 @@ void setup()
   pinMode(PIN_GRIPPER_ACTION,     INPUT);
   pinMode(PIN_CURRENTSENSOR,      INPUT);
 
-  tof::DISTANCE_THRESHOLD_SIGNAL = false;
+  
 
   /****************************************/
-
-  // TOF activation
+  
   Serial.begin(9600);
+  
+  tof::DISTANCE_THRESHOLD_SIGNAL = false;
+  // TOF activation
   tof::TOF_AVAILABLE = tof::lox.begin();
-
 
   // Check the gripper selected
   gripper_type = get_gripper_type();
@@ -58,7 +59,6 @@ void setup()
     return; 
   }
    
-    
   // Open gripper to begin tasks
   ERROR open_output = cg::open_gripper();
   if(open_output == ERROR::OK){
@@ -89,19 +89,22 @@ void loop()
   // Debug info
   tof_mode == tof::TOFMODE::DETECTING ? Serial.println("[UR] TOF configured to detect the pieces") : Serial.println("[UR] TOF configured to detect the L");
 
+
   // 1. Read tof and send signal to ur /////////////////////////////////////////////
   Serial.println("Reading TOF");
-  ERROR tof_output = tof::read_TOF(GRIPPER::CLASSIC, tof::TOFMODE::POSITIONING);
+  ERROR tof_output = tof::read_TOF(gripper_type, tof_mode);
 
   if(tof_output == ERROR::TOF_UNAVAILABLE)
     Serial.println("TOF sensor unavailable");
   if(tof_output == ERROR::OK)
     digitalWrite(PIN_TOF_OUT, tof::DISTANCE_THRESHOLD_SIGNAL);
 
+
   // 2. Operate according to gripper type //////////////////////////////////////////
   // Only classic gripper needs further operations from the UC
   if(gripper_type != GRIPPER::CLASSIC)
     return;
+
 
   // 3. Get request from the UR ////////////////////////////////////////////////////
   cg::UR_ACTION ur_action = cg::get_action();
@@ -161,6 +164,7 @@ void loop()
     case cg::UR_ACTION::ERROR:
       Serial.println("[UR] Error reading instruction");
   }
+
 
   // 4. Send updated information to the UR /////////////////////////////////////////
   if(classic_gripper_state != cg::UR_ACTION::ERROR)

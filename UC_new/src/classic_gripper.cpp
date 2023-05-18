@@ -6,6 +6,10 @@ float cg::CURRENT_THRESHOLD = 0.4;
 
 unsigned long cg::MAX_CLOSING_TIME_MILLIS = 3000;
 
+unsigned int cg::MIN_TIME_MILLIS = 500;
+
+unsigned int cg::PWM_VALUE=200;
+
 float cg::get_current(int n_samples)
 {
   // Current in Amperes: (analog reading - 553.2731257)/31.17464354
@@ -32,13 +36,15 @@ ERROR cg::close_gripper()
 {
   float I=cg::get_current(200); //Read current over 200 samples
 
-  // TO DO: Don't use delays
-  digitalWrite(PIN_STBY, HIGH); // Enable motor
-  digitalWrite(PIN_MOTOR_PWM, HIGH); // No PWM. Full pawah
+  unsigned long init_start_time = millis();
+  while(millis() - init_start_time > cg::MIN_TIME_MILLIS)
+  {
+    digitalWrite(PIN_STBY, HIGH); // Enable motor
+    digitalWrite(PIN_MOTOR_PWM, PWM_VALUE); // No PWM. Full pawah
 
-  digitalWrite(PIN_MOTOR_1, HIGH);  // Run motor 
-  digitalWrite(PIN_MOTOR_2, LOW);  // Run motor 
-  delay(500); // Run 500 ms to avoid current sensor noise
+    digitalWrite(PIN_MOTOR_1, HIGH);  // Run motor 
+    digitalWrite(PIN_MOTOR_2, LOW);  // Run motor 
+  }
 
   unsigned long init_time = millis();
   while(fabs(I) < cg::CURRENT_THRESHOLD) // Still moving
@@ -66,13 +72,16 @@ ERROR cg::open_gripper()
 {
   //if(cg::)
   float I=cg::get_current(200); //Read current over 200 samples
-  // TO DO: Don't use delays
-  digitalWrite(PIN_STBY, HIGH); // Enable motor
-  digitalWrite(PIN_MOTOR_PWM, HIGH); // No PWM. Full pawah
+  
+  unsigned long init_start_time = millis();
+  while(millis() - init_start_time > cg::MIN_TIME_MILLIS)
+  {
+    digitalWrite(PIN_STBY, HIGH); // Enable motor
+    digitalWrite(PIN_MOTOR_PWM, PWM_VALUE); // No PWM. Full pawah
 
-  digitalWrite(PIN_MOTOR_1, LOW);  // Run motor 
-  digitalWrite(PIN_MOTOR_2, HIGH);  // Run motor 
-  delay(500); // Run 500 ms to avoid current sensor noise
+    digitalWrite(PIN_MOTOR_1, HIGH);  // Run motor 
+    digitalWrite(PIN_MOTOR_2, LOW);  // Run motor 
+  }
 
   unsigned long init_time = millis();
   while(fabs(I) < cg::CURRENT_THRESHOLD) // Still moving
