@@ -6,6 +6,9 @@
  * 
 */
 
+#define DEBUG_UR 0
+#define DEBUG_UC 0
+
 #include <Arduino.h>
 #include <math.h>
 #include "pinout.h"
@@ -82,16 +85,19 @@ void loop()
   // Update the gripper selected
   gripper_type = get_gripper_type();
   // Debug info
-  gripper_type == GRIPPER::CLASSIC ? Serial.println("[UR] Classic gripper selected") : Serial.println("[UR] Pneumatic gripper selected");
+  if(DEBUG_UR)
+    gripper_type == GRIPPER::CLASSIC ? Serial.println("[UR] Classic gripper selected") : Serial.println("[UR] Pneumatic gripper selected");
 
   // Update the state of the UC
   tof_mode = tof::get_tof_configuration();
   // Debug info
-  tof_mode == tof::TOFMODE::DETECTING ? Serial.println("[UR] TOF configured to detect the pieces") : Serial.println("[UR] TOF configured to detect the L");
+  if(DEBUG_UR)
+    tof_mode == tof::TOFMODE::DETECTING ? Serial.println("[UR] TOF configured to detect the pieces") : Serial.println("[UR] TOF configured to detect the L");
 
 
   // 1. Read tof and send signal to ur /////////////////////////////////////////////
-  Serial.println("Reading TOF");
+  if(DEBUG_UC)
+    Serial.println("Reading TOF");
   ERROR tof_output = tof::read_TOF(gripper_type, tof_mode);
 
   if(tof_output == ERROR::TOF_UNAVAILABLE)
@@ -108,6 +114,8 @@ void loop()
 
   // 3. Get request from the UR ////////////////////////////////////////////////////
   cg::UR_ACTION ur_action = cg::get_action();
+  ERROR test = cg::close_gripper();
+  return;
   switch(ur_action)
   {
     // Open gripper: check current state. 
@@ -116,21 +124,25 @@ void loop()
     //          State may be either open or error if failed 
     case cg::UR_ACTION::OPEN_GRIPPER:
     {
-      Serial.println("[UR] Open gripper request");
+      if(DEBUG_UR)
+        Serial.println("[UR] Open gripper request");
       if(classic_gripper_state == cg::UR_ACTION::OPEN_GRIPPER)
       {
-        Serial.println("Gripper already opened");
+        if(DEBUG_UC)
+          Serial.println("Gripper already opened");
         break;
       }
       ERROR opening_output = cg::open_gripper();
       if(opening_output == ERROR::OK)
       {
-        Serial.println("Gripper opened successfully");
+        if(DEBUG_UC)
+          Serial.println("Gripper opened successfully");
         classic_gripper_state = cg::UR_ACTION::OPEN_GRIPPER;
       }
       else
       {
-        Serial.println("Gripper opened with errors");
+        if(DEBUG_UC)
+          Serial.println("Gripper opened with errors");
         classic_gripper_state = cg::UR_ACTION::ERROR;     
       }
       break;
@@ -142,27 +154,32 @@ void loop()
     //          State may be either closed or error if failed 
     case cg::UR_ACTION::CLOSE_GRIPPER:
     {
-      Serial.println("[UR] Close gripper request");
+      if(DEBUG_UR)
+        Serial.println("[UR] Close gripper request");
       if(classic_gripper_state == cg::UR_ACTION:: CLOSE_GRIPPER)
       {
-        Serial.println("Gripper already closed");
+        if(DEBUG_UR)
+          Serial.println("Gripper already closed");
         break;
       }
       ERROR closing_output = cg::close_gripper();
       if(closing_output == ERROR::OK)
       {
-        Serial.println("Gripper closed successfully");
+        if(DEBUG_UR)
+          Serial.println("Gripper closed successfully");
         classic_gripper_state = cg::UR_ACTION::CLOSE_GRIPPER;
       }
       else
       {
-        Serial.println("Gripper opened with errors");
+        if(DEBUG_UR)
+          Serial.println("Gripper opened with errors");
         classic_gripper_state = cg::UR_ACTION::ERROR;     
       }
       break;
     }
     case cg::UR_ACTION::ERROR:
-      Serial.println("[UR] Error reading instruction");
+      if(DEBUG_UR)
+        Serial.println("[UR] Error reading instruction");
   }
 
 

@@ -1,3 +1,5 @@
+#define DEBUG_TOF 0
+
 #include <Arduino.h>
 #include <Adafruit_VL53L0X.h>
 #include "pinout.h"
@@ -50,8 +52,10 @@ ERROR tof::read_TOF(type::GRIPPER gripper_type, tof::TOFMODE tof_mode)
   // Send signal if measured distance is closer than threshold
   tof::DISTANCE_THRESHOLD_SIGNAL = distance < threshold;
 
-  Serial.println("[TOF]: ");
-  Serial.println(distance);
+  if(DEBUG_TOF){
+    Serial.println("[TOF]: ");
+    Serial.println(distance);
+  }
 
   return ERROR::OK;
 }

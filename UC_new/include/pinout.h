@@ -30,7 +30,7 @@
     #define PIN_GRIPPER_ACTION 10
 
     /// @brief Analog input from the current sensor
-    #define PIN_CURRENTSENSOR A0
+    #define PIN_CURRENTSENSOR A1
 
     /// @brief For I2C communications with the TOF sensor
     #define PIN_TOF_SDA A4

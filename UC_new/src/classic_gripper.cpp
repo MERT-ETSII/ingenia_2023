@@ -1,3 +1,5 @@
+#define DEBUG_CURRENTSENSOR 1
+
 #include <Arduino.h>
 #include "pinout.h"
 #include "classic_gripper.h"
@@ -12,18 +14,27 @@ unsigned int cg::PWM_VALUE=200;
 
 float cg::get_current(int n_samples)
 {
-  // Current in Amperes: (analog reading - 553.2731257)/31.17464354
-  // for an analog reading in range 0 - 1023
-  // Source: trust me, bro
 
-  float voltage_sensor;
+  float voltage;
   float current = 0;
-  for(int i=0;i<n_samples;i++)
-  {
-    voltage_sensor = (analogRead(PIN_CURRENTSENSOR) - 553.2731257)/31.17464354;
-    current += voltage_sensor;
+  long analog_acum = 0;
+  for(int i=0;i<n_samples;i++){
+    int analog_lecture = analogRead(PIN_CURRENTSENSOR);
+    analog_acum += analog_lecture;
   }
-  current = current/n_samples;
+  
+  float analog_lecture = (float)analog_acum/(float)n_samples;
+  // Source: trust me, bro
+  voltage = analog_lecture/1023*5;
+  current = (voltage - 2.5)/0.2;
+  if(DEBUG_CURRENTSENSOR){
+    Serial.print("[CURRENT_S]: Analog: ");
+    Serial.println(analog_lecture);
+    Serial.print("[CURRENT_S]: Voltage: ");
+    Serial.println(voltage);
+    Serial.print("[CURRENT_S]: Current: ");
+    Serial.println(current);
+  }
   return(current);
 }
 
