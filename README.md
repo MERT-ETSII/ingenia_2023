@@ -3,7 +3,7 @@
 
 Este repositorio pertenece al equipo **4.Tech** de la asignatura [_INGENIA: Diseño de sistemas inteligentes con robots y AGV_](http://fabricacion.industriales.upm.es/ingenia/). Se trata de un grupo siete alumnos del Master en Ingeniería Industrial impartido en la ETSII-UPM.
 
-![](./Documentacion/logo_4Tech.jpg)
+![](./Documentacion/logo_4Tech.jpg){width='600px' height='400px'}
 
 # Descripción del proyecto
 El objetivo de este repositorio es almacenar todo el código involucrado en el desarrollo del proyecto de la asignatura. La asignatura busca diseñar e implentar un proceso de fabricación y logística automatizada desde sus etapas tempranas de diseño conceptual hasta la automatización de procesos complejos como la selección de piezas o el transporte de materiales.
@@ -27,8 +27,8 @@ El proyecto ha diseñado dos pinzas adaptadas al robot colaborativo UR: una pinz
 # Composición del repositorio
 El repositorio consta de cuatro bloques de programación principales. Cada bloque se corresponde a un equipo diferente y emplea sus propias herramientas de control y programación.
 
-    - **Botonera:** Es el dispositivo que emplea el operario para llamar al AGV y encargarle qué misión debe cumplir. Así como también el tipo de piezas que lleva, cuantas son, a dónde debe dirigirse o alguna información que se debe tener en cuenta (material, posición de las piezas y código de errores).
-    - **Ensayos:** La pinza clásica está accionada a través de un motor de corriente continua y controlado a través de un driver responsable de regular el flujo de corriente necesario para su apertura y cierre. Este directorio almacena todo el código referente a las pruebas de contacto, control y diseño de este sistema de regulación.
-    - **UC:** Este directorio guarda todo el código de la unidad de control. Es decir toda la asignación de responsabilidades y el reparto de operaciones de inspección, comunicación de instrucciones AGV-UR y cambio de registros de ambos dispositivos
-    - **UR:** Es todo el código de control del robot colaborativo. Incluye los scripts de operaciones internas como el posicionamiento, el barrido, el cambio de pieza o la carga/descarga de piezas.
+- **Botonera:** Es el dispositivo que emplea el operario para llamar al AGV y encargarle qué misión debe cumplir. Así como también el tipo de piezas que lleva, cuantas son, a dónde debe dirigirse o alguna información que se debe tener en cuenta (material, posición de las piezas y código de errores).
+- **Ensayos:** La pinza clásica está accionada a través de un motor de corriente continua y controlado a través de un driver responsable de regular el flujo de corriente necesario para su apertura y cierre. Este directorio almacena todo el código referente a las pruebas de contacto, control y diseño de este sistema de regulación.
+- **UC:** Este directorio guarda todo el código de la unidad de control. Es decir toda la asignación de responsabilidades y el reparto de operaciones de inspección, comunicación de instrucciones AGV-UR y cambio de registros de ambos dispositivos
+- **UR:** Es todo el código de control del robot colaborativo. Incluye los scripts de operaciones internas como el posicionamiento, el barrido, el cambio de pieza o la carga/descarga de piezas.
 
