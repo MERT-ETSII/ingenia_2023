@@ -3,7 +3,7 @@
 
 Este repositorio pertenece al equipo **4.Tech** de la asignatura [_INGENIA: Diseño de sistemas inteligentes con robots y AGV_](http://fabricacion.industriales.upm.es/ingenia/). Se trata de un grupo siete alumnos del Master en Ingeniería Industrial impartido en la ETSII-UPM.
 
-![](./Documentacion/logo_4Tech.jpg){width='600px' height='400px'}
+![](./Documentacion/logo_4Tech.jpg){width='300px' height='200px'}
 
 # Descripción del proyecto
 El objetivo de este repositorio es almacenar todo el código involucrado en el desarrollo del proyecto de la asignatura. La asignatura busca diseñar e implentar un proceso de fabricación y logística automatizada desde sus etapas tempranas de diseño conceptual hasta la automatización de procesos complejos como la selección de piezas o el transporte de materiales.
