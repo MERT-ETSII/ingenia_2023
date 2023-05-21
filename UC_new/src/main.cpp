@@ -52,6 +52,7 @@ void setup()
   tof::DISTANCE_THRESHOLD_SIGNAL = false;
   // TOF activation
   tof::TOF_AVAILABLE = tof::lox.begin();
+  if(!tof::TOF_AVAILABLE) Serial.println("TOF sensor unavailable during setup");
 
   // Check the gripper selected
   gripper_type = get_gripper_type();
@@ -82,6 +83,8 @@ void setup()
 
 void loop() 
 {
+  // delay(2000);
+  
   // Update the gripper selected
   gripper_type = get_gripper_type();
   // Debug info
