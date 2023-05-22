@@ -1,0 +1,100 @@
+def movimientoSexy():
+  modbus_add_signal("192.168.0.9", 255, 402, 2, "MODBUS_1", False)
+  modbus_set_signal_update_frequency("MODBUS_1", 10)
+  modbus_add_signal("192.168.0.9", 255, 260, 2, "MODBUS_2", False)
+  modbus_set_signal_update_frequency("MODBUS_2", 10)
+  modbus_add_signal("192.168.0.9", 255, 272, 3, "MODBUS_7", False)
+  modbus_set_signal_update_frequency("MODBUS_7", 10)
+  modbus_add_signal("192.168.0.29", 255, 1036, 1, "MODBUS_3", False)
+  modbus_set_signal_update_frequency("MODBUS_3", 10)
+  modbus_add_signal("192.168.0.29", 255, 1007, 3, "MODBUS_4", False)
+  modbus_set_signal_update_frequency("MODBUS_4", 10)
+  modbus_add_signal("192.168.0.29", 255, 1073, 2, "totem_1", False)
+  modbus_set_signal_update_frequency("totem_1", 10)
+  modbus_add_signal("192.168.0.29", 255, 1071, 2, "AGV", False)
+  modbus_set_signal_update_frequency("AGV", 10)
+  modbus_add_signal("192.168.0.29", 255, 1008, 1, "MODBUS_6", False)
+  modbus_set_signal_update_frequency("MODBUS_6", 10)
+  modbus_add_signal("192.168.0.29", 255, 1075, 2, "AGVS", False)
+  modbus_set_signal_update_frequency("AGVS", 10)
+  modbus_add_signal("192.168.0.29", 255, 1181, 2, "Pieza1_4T", False)
+  modbus_set_signal_update_frequency("Pieza1_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1183, 2, "Pieza2_4T", False)
+  modbus_set_signal_update_frequency("Pieza2_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1185, 2, "Pieza3_4T", False)
+  modbus_set_signal_update_frequency("Pieza3_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1189, 2, "Pieza5_4T", False)
+  modbus_set_signal_update_frequency("Pieza5_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1191, 2, "EstadoAGV_4T", False)
+  modbus_set_signal_update_frequency("EstadoAGV_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1193, 3, "AGVBlock_4T", False)
+  modbus_set_signal_update_frequency("AGVBlock_4T", 10)
+  modbus_add_signal("192.168.0.29", 255, 1032, 1, "Mision3_Retorno", False)
+  modbus_set_signal_update_frequency("Mision3_Retorno", 1)
+  modbus_add_signal("192.168.0.29", 255, 1187, 2, "Pieza4_4T", False)
+  modbus_set_signal_update_frequency("Pieza4_4T", 10)
+  set_standard_analog_input_domain(0, 0)
+  set_standard_analog_input_domain(1, 0)
+  set_tool_analog_input_domain(0, 0)
+  set_tool_analog_input_domain(1, 0)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_tool_voltage(0)
+  set_input_actions_to_default()
+  modbus_set_runstate_dependent_choice("MODBUS_7",0)
+  modbus_set_runstate_dependent_choice("MODBUS_3",0)
+  modbus_set_runstate_dependent_choice("MODBUS_4",0)
+  modbus_set_runstate_dependent_choice("MODBUS_6",0)
+  modbus_set_runstate_dependent_choice("AGVBlock_4T",0)
+  modbus_set_runstate_dependent_choice("Mision3_Retorno",0)
+  set_tcp(p[0.0,0.0,0.0,3.1415,0.0,0.0])
+  set_payload(0.1, [0.0, 0.0, 0.0])
+  set_gravity([0.0, 0.0, 9.82])
+  global SRutillaje=p[0.13442, -0.80841, -0.11926, -0.00545, -0.00538, 0.01152]
+  global SRut=p[0.12360, -0.80854, -0.11926, -0.00545, -0.00538, 0.01152]
+  global presetter=p[-0.59167, -0.50427, -0.06437, 0.00000, 3.14150, 0.00000]
+  global tcp_laser=p[-0.09702, -0.01972, 0.09235, 0.00000, 3.14150, 0.00000]
+  global poseTOF=p[0.83054, -0.41046, 0.19251, -0.02540, 0.00272, 2.40964]
+  global plane_1=[0, 0, 0, 0, 0, 0]
+  global z_actual=-0.17465
+  global pinza_objetivo=3
+  global x_actual=-0.95000
+  global pinza_actual=3
+  global pose2=p[-0.60700, -0.56800, 0.04800, 0.00000, 0.00000, 0.00000]
+  global feature_plane=[0.92991, -0.20146, -0.00927, -0.00929, 0.00661, 0.00722]
+  global pose1=p[-0.65000, -0.52000, 0.04800, 0.00000, 0.00000, 0.00000]
+  global angulo_base=-0.00005
+  global calibrado=p[0.00015, -0.00010, -0.02181, -0.00004, -0.00014, 0.00006]
+  global delta_y=0
+  global pn_jointpos=[-0.10443, -1.72174, -2.05430, -0.96489, 1.57136, 1.45118]
+  global delta_x=0.05000
+  global angulos_actual=[-0.00005, -1.57082, -0.00002, -3.14157, -1.57071, -0.00005]
+  global SRpreset=[-1.36200, -0.21200, 0.07690, 0, 3.14150, 0]
+  global SRmesa=p[0.76884, -0.27794, -0.16726, -0.00540, -0.00530, 0.01160]
+  global pn_test_2=0
+  global new_tcp=p[-0.00015, 0.00010, 0.03181, 0.00004, 0.00014, -0.00006]
+  global pn_test_1=0
+  global y_actual=-0.05000
+  global Plane_1=p[-0.10879371779744619,-0.7749624733619729,-0.007763904479110137,-0.0010155215865217408,8.01704997202092E-4,-9.124332065346547E-4]
+  global Point_1=p[-0.10879371779744619,-0.7749624733619729,-0.007763904479110137,1.171507412366327,1.0552676018788516,-0.9998056944719331]
+  global plano_seg_post=p[0.7262933715464818,0.033143115886078836,-0.06968318201858939,0.04138727186802139,-2.251668413328048,-2.139326867460174]
+  while (True):
+    $ 1 "Robot Program"
+    $ 2 "punto_p≔p[0,0,0,0,0,0]"
+    global punto_p=p[0,0,0,0,0,0]
+    $ 3 "movel(pose_trans(SRmesa,p[0, 0, 0.1, 0, 3.14, 0]), a=0.12, v=0.1)"
+    movel( pose_trans (SRmesa,p[0, 0, 0.1, 0, 3.14, 0]), a=0.12, v=0.1)
+    $ 4 "pos1≔get_actual_tcp_pose()"
+    global pos1= get_actual_tcp_pose ()
+    $ 5 "movel(pose_trans(SRmesa,p[0,-0.5,0.5,0,3.14,0]),a=0.12,v=0.1)"
+    movel(pose_trans(SRmesa,p[0,-0.5,0.5,0,3.14,0]),a=0.12,v=0.1)
+    $ 6 "pos2≔get_actual_tcp_pose()"
+    global pos2= get_actual_tcp_pose ()
+    $ 7 "pos3≔pose_add(pos1, pos2)"
+    global pos3=pose_add(pos1, pos2)
+    $ 8 "movel(pose_trans(SRmesa,p[-0.5,-0.5,0.5,0,3.14,0]),a=0.12,v=0.1)"
+    movel(pose_trans(SRmesa,p[-0.5,-0.5,0.5,0,3.14,0]),a=0.12,v=0.1)
+    $ 9 "Popup"
+    popup("Fin movimiento sexy", "Mensaje", False, False, blocking=True)
+  end
+end

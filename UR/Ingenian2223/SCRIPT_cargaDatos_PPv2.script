@@ -1,0 +1,2 @@
+    vector_MODBUS=[modbus_get_signal_status("Pieza1_4T") , modbus_get_signal_status("Pieza2_4T") ,modbus_get_signal_status("Pieza3_4T") ,modbus_get_signal_status("Pieza4_4T") ,modbus_get_signal_status("Pieza5_4T") ]
+    vector_PosPiezas=[ p[0, 0.3, 0.4, 0, 0, 3.1415 ], p[0.15, 0.15, 0.4, 0, 0, 3.1415 ], p[0, 0, 0.4, 0, 0, 3.1415 ], p[0.15, -0.15, 0.4, 0, 0, 3.1415 ], p[0, -0.3, 0.4, 0, 0, 3.1415 ]] 

@@ -1,0 +1,2 @@
+    vector_MODBUS=[modbus_get_signal_status("Pieza1_4T") , modbus_get_signal_status("Pieza2_4T") ,modbus_get_signal_status("Pieza3_4T") ,modbus_get_signal_status("Pieza4_4T") ,modbus_get_signal_status("Pieza5_4T") ]
+    
