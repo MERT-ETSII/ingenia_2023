@@ -1,0 +1,39 @@
+# Prueba de posicionamiento. 
+
+# Vectores unitarios del SRglobal --> Para sacar más cómodamente el angulo de giro theta
+x_n=p[1,0,0,0,0,0]
+y_n=p[0,1,0,0,0,0]
+z_n=p[0,0,1,0,0,0]
+
+# Trabajo con 4 puntos a huevo USANDO COMO REFERENCIA SRglobal
+origenMesa=p[0,0,0.4,0,0,0]
+p1=p[0.950, 0.39, 0.4,0,0,0]
+p2=p[0.959, 0.21, 0.4,0,0,0]
+p3=p[1.00, -0.11, 0.4,0,0,0]
+p4=p[1.2,-0.1,0.4,0,0,0]
+
+# Vector orientador 1. Sale de restar p2-p1
+u1=pose_sub(p2,p1)
+#vector orientador 2. Sale de restar p4-p3
+u2=pose_sub(p4,p3)
+
+# Sacar el angulo de giro --> Esto en principio está todo en SRmesa.
+cosTheta=(u2[0]*x_n[0]+u2[1]*x_n[1])/(sqrt(pow(u2[0],2)+pow(u2[1],2)))
+Theta=acos(costheta)
+
+# Ecuaciones de la  recta
+## Defino la pendiente de la recta que une p1 y p2 y luego saco el punto de cruce (x_c, y_c) --> Mirar cálculos documentación.
+m1=(p2[1]-p1[1])/(p2[0]-p1[0])
+## Defino la pendiente de la recta que une p3 y p4 y luego saco el punto de cruce (x_c, y_c) --> Mirar cálculos documentación.
+m2=(p4[1]-p3[1])/(p4[0]-p3[0])
+
+## Ahora saco las coordenadas del cruce --> Referencio al punto p1 y p3
+x_c=(m1*p1[0]-m2*p3[1]+p3[1]-p1[0]/m)/(m1-m2)
+y=m1*x_c+(p1[1]-m1*p1[0])
+
+#La traslación quedará expresada por el vector
+T=p[x_c,y_c, 0.4, 0,0,0] #Se debe escribir asi porque se expresa como pose. A nosotros en el fondo nos interesa solo las tres primeras corodenadas
+
+#El cambio de base de mesa a AGV viene dado por el vector de Rodrigues
+VR=p[x_c, y_c, 0.4, 0,0, -Theta]
+
