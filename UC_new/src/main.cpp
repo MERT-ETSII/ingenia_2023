@@ -117,8 +117,6 @@ void loop()
 
   // 3. Get request from the UR ////////////////////////////////////////////////////
   cg::UR_ACTION ur_action = cg::get_action();
-  ERROR test = cg::close_gripper();
-  return;
   switch(ur_action)
   {
     // Open gripper: check current state. 
