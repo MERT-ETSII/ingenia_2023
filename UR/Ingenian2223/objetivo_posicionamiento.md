@@ -1,1 +1,0 @@
-En este directorio se subirán los distintos programas para el posicionamiento del UR AGV
